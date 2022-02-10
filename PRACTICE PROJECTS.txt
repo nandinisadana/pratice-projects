@@ -1,0 +1,482 @@
+
+PROJECT 1:
+Validation of user login:
+
+Dashboard
+package com.java.userlogin;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/dashboard")
+public class Dashboard extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.setContentType("text/html");
+
+		HttpSession session = request.getSession();
+
+		PrintWriter out = response.getWriter();
+
+//		Check whether the session already exists
+		if ((session.getAttribute("userName") != null) && (session.getAttribute("userPassword") != null))  {
+
+			out.println("<h3>Welcome " + session.getAttribute("userName"));
+
+			out.println("<br> You are now logged in...</h3>");
+
+			out.println("<p><h4><a href='logout'>LOGOUT</a></h4>");
+		}
+
+		else {
+			response.sendRedirect("index.html");
+		}
+
+	}
+
+}
+
+
+
+
+
+
+
+Login
+
+
+package com.java.userlogin;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/login")
+public class Login extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		Set the content type
+		response.setContentType("text/html");
+		
+//		Get the writer
+		PrintWriter out = response.getWriter();
+		
+//		Get the userName from the request
+		String uName = request.getParameter("userName");
+		String uPassword = request.getParameter("userPassword");
+		
+//		Get a reference to the HttpSession object
+		HttpSession theSession = request.getSession();
+		
+//		Validate the username
+		if(uName.trim().equals("admin_mp")  && uPassword.trim().equals("mphasis99")) {
+//			Save the username in the session
+			theSession.setAttribute("userName", uName);
+			theSession.setAttribute("userPassword", uPassword);
+//			Redirect to the Dashboard
+			response.sendRedirect("dashboard");
+			
+		}
+		else {
+			out.println("<font color='red'>Invalid username or Password...</font>");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("index.html");
+			dispatcher.include(request, response);
+		}
+		
+
+	}
+
+}
+
+Logout
+
+package com.java.userlogin;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/logout")
+public class Logout extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+		
+		PrintWriter out = response.getWriter();
+		
+//		Invalidate the session here
+		request.getSession().invalidate();
+		
+		out.println("<h2>You are now logged out...<br>");
+		
+		out.println("<a href='index.html'>Login again</a>");
+	}
+
+}
+
+
+Validation of userlogin.html
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>User Login</title>
+</head>
+<body>
+<h1>User Login</h1>
+<hr>
+<form action="login">
+<input type="text" name="userName" placeholder="Your username"><br>
+<input type="password" name="userPassword" placeholder="Password"><br>
+<input type="submit" value="LOGIN">
+</form>
+</body>
+</html>
+
+
+
+
+2.PRODUCT DETAILS:
+
+package com.nandu.training;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/app")
+public class Validation extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+		String pId = request.getParameter("productId");
+		String pName = request.getParameter("productName");
+		String pPrice = request.getParameter("productPrice");
+		
+		HttpSession theSession = request.getSession();
+		
+		theSession.setAttribute("pid", pId);
+		theSession.setAttribute("pname", pName);
+		theSession.setAttribute("pprice", pPrice);
+		
+		response.sendRedirect("display.jsp");
+		
+		
+	}
+
+}
+
+
+
+  Product.JSP
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Product Details</title>
+</head>
+<body>
+
+<h1>Enter Product Details</h1>
+<hr>
+<form action="app">
+<input type="text" name="productId" placeholder="PRODUCT ID"><br>
+<input type="text" name="productName" placeholder="PRODUCT NAME"><br>
+<input type="text" name="productPrice" placeholder="PRODUCT PRICE"><br>
+<input type="submit" value="ENTER">
+</form>
+
+</body>
+</html>
+
+
+
+
+Product.jsp(2)
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Display</title>
+</head>
+<body>
+
+<h1>Displaying the Product Details....</h1>
+<hr>
+<%= "Product Id : " + session.getAttribute("pid") %> <br> <br>
+
+<%= "Product Name : " + session.getAttribute("pname") %>  <br> <br>
+
+<%= "Product Price : " + session.getAttribute("pprice") %>
+
+
+</body>
+</html>
+
+
+3.ADDING A NEWFILE IN DATABASE:
+
+package com.nandu.training;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+@javax.persistence.Entity
+@Table(name = "students")
+public class students {
+
+	public String getname() {
+		return getname();
+	}
+
+	public void setname(String name ) {
+		this.name = name;
+	}
+
+	public int gets_id() {
+		return s_id;
+	}
+
+	public void sets_id(int s_id) {
+		this.s_id = s_id;
+	}
+
+	public String gets_course() {
+		return s_course;
+	}
+
+	public void sets_course(String s_course) {
+		this.s_course = s_course;
+	}
+	public int getc_id() {
+		return c_id;
+	}
+
+	public void setc_id(int c_id) {
+		this.c_id = c_id;
+	}
+
+
+	@Id
+	@Column(name="c_id")
+	int c_id;
+	@Column(name = "s_course")
+	String s_course;
+	@Column(name = "s_id")
+	int s_id;
+	@Column(name="name")
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	String name;
+	
+	
+	
+	
+
+	public students() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		return "Learner [learnerId=" + name + ", learnerName=" + s_id + ", learnerDomain=" + s_course+",courseid="+c_id
+				+ "]";
+	}
+
+	public students(String name,int s_id, String s_course,int c_id) {
+	
+		this.name = name;
+		this.s_id=s_id;
+		this.s_course=s_course;
+		this.c_id=c_id;
+//		this.learnerDomain = learnerDomain;
+	}
+	
+	
+	
+}
+
+package com.nandu.training;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+//        Get the SessionFactory
+    	SessionFactory factory = new Configuration()
+    								.configure("hibernate.cfg.xml")
+    								.addAnnotatedClass(students.class)
+    								.buildSessionFactory();
+    	
+//    	Get the Session
+    	Session theSession = factory.getCurrentSession();
+    	
+    	try {
+//    		Add a new learner
+    		students theLearner = new students("m.anil",109,"devops",1105);
+    		
+    		
+//    		Start the transaction
+    		theSession.beginTransaction();
+    		
+//    		Save the learner
+    		theSession.save(theLearner);
+    		
+//    		Commit the transaction
+    		theSession.getTransaction().commit();
+    		System.out.println("new students sucessfully inserted ");
+    		System.out.println("Learner id : " + theLearner.name);
+    		
+//    		Learner learner = theSession.get(Learner.class, 2);
+//    		
+//    		System.out.println("Learner details by id : " + learner);
+    		
+ 
+    		
+    		
+    		
+    	}finally {
+    		factory.close();
+    	}
+    }}
+
+
+
+
+4.RETRIVING THE PRODUCT CODE:
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/product")
+public class productid extends HttpServlet{
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String url="jdbc:mysql://localhost:3306/products";
+		String uname="root";
+		String pass="";
+		
+		response.setContentType("text/html");
+		
+		String pId = request.getParameter("productid");
+	
+		PrintWriter out = response.getWriter();
+		
+		String query="select * from product where p_id=?";
+		out.print("<h1>Displaying the Product Details...</h1>");
+		out.print("<table border='1'><tr><th>Product Id</th><th>Product Name</th><th>quantity</th><th>bill</th></tr>");
+		
+		try {
+	      Class.forName("com.mysql.cj.jdbc.Driver");
+	      Connection dbCon = DriverManager.getConnection(url, uname, pass);
+	      PreparedStatement st=  dbCon.prepareStatement(query);
+	      
+	      st.setString(1, pId);
+	      
+	      ResultSet rs =st.executeQuery();
+	      
+	      while(rs.next()) {
+	    	  
+	    	  out.print("<tr><td>");
+	    	  out.println(rs.getInt(1));
+	    	  out.print("</td>");
+	    	  out.print("<td>");
+	    	  out.print(rs.getString(2));
+	    	  out.print("</td>");
+	    	  out.print("<td>");
+	    	  out.print(rs.getInt(3));
+	    	  out.print("</td>");
+	    	  out.print("</tr>");
+	    
+	    	  
+			}
+	      
+		}
+		catch(Exception e){
+			
+			System.out.println("Some Issue : "+ e.getMessage());
+			
+			
+		}
+		
+		out.print("</table>");
+		
+	}
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1 style="background-color:powderblue;">user credentials</h1>
+<form action="productid" method="post">
+  <input type="text" name="productid" placeholder="enter the productid">
+  <button>Submit</button>
+</form>
+
+</body>
+</html>
+
+
+
